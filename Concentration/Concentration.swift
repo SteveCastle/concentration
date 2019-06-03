@@ -9,9 +9,31 @@
 import Foundation
 
 class Concentration {
-    var cards = [Card]()
-    var indexOfOnlyFaceUpCard: Int?
+   private(set) var cards = [Card]()
+    
+    // Example of computed propery with get and set.
+    private var indexOfOnlyFaceUpCard: Int? {
+        get {
+            var foundIndex : Int?
+            for index in cards.indices {
+                if cards[index].isFaceUp {
+                    if foundIndex == nil {
+                        foundIndex = index
+                    } else {
+                        return nil
+                    }
+                }
+            }
+            return foundIndex
+        }
+        set {
+            for index in cards.indices {
+                cards[index].isFaceUp = (index == newValue)
+            }
+        }
+    }
     func chooseCard(at index: Int) {
+        assert(cards.indices.contains(index), "Card index not in cards array.")
         if !cards[index].isMatched {
             if let matchIndex = indexOfOnlyFaceUpCard, matchIndex != index {
                 // check if cards match
@@ -20,12 +42,7 @@ class Concentration {
                  cards[index].isMatched = true
                 }
                 cards[index].isFaceUp = true
-                indexOfOnlyFaceUpCard = nil
             } else {
-                for flipDownIndex in cards.indices {
-                    cards[flipDownIndex].isFaceUp = false
-                }
-                cards[index].isFaceUp = true
                 indexOfOnlyFaceUpCard = index
             }
         }
